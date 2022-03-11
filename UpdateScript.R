@@ -106,45 +106,6 @@ for(i in 1:nrow(NotTopLevelFolderList)){
 
 }
 
-Test<-NextFolderBind[,"name"]%in%FolderList[, "name"]
-Test
-# while(FolderTest){
-#   if(Counter==1){
-#   NextFolder<-OneDrive$list_files(substring(FolderList[i, "name"],2), full_names=TRUE)
-#   NextFolderBind<-OneDrive$list_files(substring(FolderList[i, "name"],2), full_names=TRUE)
-#   NextFolderBind<-filter(NextFolderBind, size!=0)
-#   NextFolderBind<-filter(NextFolderBind, isdir==TRUE)
-#   FolderList<-rbind(FolderList, NextFolderBind)
-# 
-#   FolderTest<-TRUE %in% NextFolderBind[,"isdir"]
-#   Counter<-Counter+1
-# 
-# 
-#   }
-#   else{
-#     NextFolder<-OneDrive$list_files(NextFolderBind[SubCounter, "name"], full_names=TRUE)
-#     NextFolderBind<-OneDrive$list_files(NextFolderBind[SubCounter, "name"], full_names=TRUE)
-#     NextFolderBind<-filter(NextFolderBind, size!=0)
-#     NextFolderBind<-filter(NextFolderBind, isdir==TRUE)
-#     FolderList<-rbind(FolderList, NextFolderBind)
-# 
-#     if(nrow(NextFolderBind)==0){
-#       break
-#     }
-# 
-#     if(TRUE %in% NextFolderBind[,"isdir"]){
-#       FolderTest<-TRUE %in% NextFolderBind[,"isdir"]
-#       next
-#     }else{
-#     SubCounter<-SubCounter+1
-#     }
-#   }
-# # SubCounter<-1
-# }
-
-
-
-
 
 ##Builds the initial OneDrive file list.##
 FileList<-OneDrive$list_files(full_names=TRUE)
