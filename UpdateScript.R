@@ -152,6 +152,7 @@ FileList<-filter(FileList, size!=0)
 FileList<-filter(FileList, isdir==FALSE)
 
 for(i in 1:nrow(FolderList)){
+  print(i)
   if(i<=nrow(TopLevelFolderList)){
     FileListBind<-OneDrive$list_files(substring(FolderList[i, "name"],2), full_names=TRUE)
     FileListBind<-filter(FileListBind, size!=0)
@@ -160,7 +161,6 @@ for(i in 1:nrow(FolderList)){
       next
     }else{
     FileList<-rbind(FileList, FileListBind)
-    print("TRUE")
     next
     }
   }
@@ -172,7 +172,6 @@ for(i in 1:nrow(FolderList)){
     next
   }
   FileList<-rbind(FileList, FileListBind)
-  print("TRUE")
   
 }
 
