@@ -206,7 +206,7 @@ for (i in 1:nrow(FoldersToCreate)){
   FoldersToBind<-add_column(FoldersToBind, !!NotesName:=NA_character_)
   FoldersToBind<-filter(FoldersToBind,FoldersToBind[,"Path"]%!in%FoldersToCreate[, "Path"] )
   FoldersToCreate<-rbind(FoldersToCreate, FoldersToBind)
-  
+  rownames(FoldersToCreate)<-NULL
   
 }
 
@@ -322,6 +322,7 @@ for(i in 1:nrow(FoldersToCreateTest)){
     FilesToUploadBind<-add_column(FilesToUploadBind, !!NotesName:=NA_character_)
     FilesToUploadBind<-add_column(FilesToUploadBind, !!OneDrivePath:=NA_character_)
     FilesToUpload<-rbind(FilesToUpload, FilesToUploadBind)
+    rownames(FilesToUpload)<-NULL
     next
     }
   
@@ -342,7 +343,7 @@ for(i in 1:nrow(FoldersToCreateTest)){
   FilesToUploadBind<-add_column(FilesToUploadBind, !!OneDrivePath:=NA_character_)
   
   FilesToUpload<-rbind(FilesToUpload, FilesToUploadBind)
-
+  rownames(FilesToUpload)<-NULL
 }
 
 for(i in 1:nrow(FilesToUpload)){
@@ -365,7 +366,7 @@ for(i in 1:nrow(FilesToUpload)){
 
 RemovalList<-sapply(RemovalList,"[[",1)
 FilesToUpload<-FilesToUpload[-RemovalList,]
-
+FileFails<-0
 TotalFiles<-as.numeric(nrow(FilesToUpload))
 if(TotalFiles!=0){
   for(i in 1:nrow(FilesToUpload)){
@@ -413,22 +414,27 @@ if(TotalFiles!=0){
         }
         
         if(z==10){
-          break
+          FileFails<-FileFails+1
+          print(paste0("File failed to load at row number ", i))
+          next
         }
         
         if(z!=10){
-          print(paste0(i, " files uploaded of ", TotalFiles, " total."))
+          print(paste0(i, " file(s) uploaded of ", TotalFiles, " total."))
           next
         }
       }
       
-      break
+      FileFails<-FileFails+1
+      print(paste0("File failed to load at row number ", i))
+      next
 
     }
   
-  print(paste0(i, " files uploaded of ", TotalFiles, " total."))
+  print(paste0(i, " file(s) uploaded of ", TotalFiles, " total."))
   }
 }else{
   print("OneDrive is up-to-date with local drive.")
+  print(paste0(FileFails, " file(s) failed to upload."))
 }
 
