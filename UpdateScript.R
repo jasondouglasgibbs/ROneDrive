@@ -346,6 +346,7 @@ for(i in 1:nrow(FoldersToCreateTest)){
   rownames(FilesToUpload)<-NULL
 }
 
+
 for(i in 1:nrow(FilesToUpload)){
   FilesToUpload[i, "OneDrivePath"]<-substring(as.character(FilesToUpload[i, "Path"]),4)
   
@@ -361,13 +362,14 @@ for(i in 1:nrow(FilesToUpload)){
     RemovalList<-rbind(RemovalList,RemovalListAdd)
   }
   
-  
 }
 
+rownames(FilesToUpload)<-NULL
 RemovalList<-sapply(RemovalList,"[[",1)
 FilesToUpload<-FilesToUpload[-RemovalList,]
 FileFails<-0
 TotalFiles<-as.numeric(nrow(FilesToUpload))
+rownames(FilesToUpload)<-NULL
 if(TotalFiles!=0){
   for(i in 1:nrow(FilesToUpload)){
     if(grepl("#",as.character(FilesToUpload[i,"Path"]))){
@@ -431,8 +433,9 @@ if(TotalFiles!=0){
 
     }
   
-  print(paste0(i, " file(s) uploaded of ", TotalFiles, " total."))
+  print(paste0(i-FileFails, " file(s) uploaded of ", TotalFiles, " total."))
   }
+  print(paste0(FileFails, " file(s) failed to upload."))
 }else{
   print("OneDrive is up-to-date with local drive.")
   print(paste0(FileFails, " file(s) failed to upload."))
