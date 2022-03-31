@@ -417,7 +417,7 @@ if(TotalFiles!=0){
         
         if(z==10){
           FileFails<-FileFails+1
-          print(paste0("File failed to load at row number ", i))
+          print(paste0("File failed to upload at row number ", i))
           next
         }
         
@@ -428,7 +428,7 @@ if(TotalFiles!=0){
       }
       
       FileFails<-FileFails+1
-      print(paste0("File failed to load at row number ", i))
+      print(paste0("File failed to upload at row number ", i))
       next
 
     }
