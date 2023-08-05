@@ -11,7 +11,7 @@
 ##update those files.##
 ##-The script basically determines "updates" are present by comparing file names##
 ##and paths, not by "modified" time.##
-##-The OneDrive your using should mirror the initial structure of the local files##
+##-The OneDrive you're using should mirror the initial structure of the local files##
 ##you are uploading. You must at least have a top level folder that contains at##
 ##least one file.##
 
@@ -19,6 +19,7 @@
 library(Microsoft365R)
 library(tidyverse)
 library(readxl)
+library(tictoc)
 ##Creates an operator for the logic "not in".##
 `%!in%`<-Negate(`%in%`)
 
@@ -32,6 +33,7 @@ FileSpreadsheet<-read_xlsx("LocalFileList.xlsx")
 ##Select the link in the console, load the web page, and input the code listed##
 ##in the console.##
 OneDrive<-get_personal_onedrive(auth_type="device_code")
+tic("Folder/File List Creation and Comparison.")
 ##Lists the top level folders that exist on the OneDrive. This is necessary##
 ##because of structure of paths for top level folders.##
 ##
@@ -74,7 +76,7 @@ for(i in 1:nrow(NotTopLevelFolderList)){
   BreakCheck<-FALSE
   FolderTest<-TRUE
   while(FolderTest){
-    print(j)
+    #print(j)
     
     ##Stops the while loop once all folders have been found.##
     if(j==nrow(NotTopLevelFolderList)+1){
@@ -86,7 +88,7 @@ for(i in 1:nrow(NotTopLevelFolderList)){
     NextFolderBind<-try(OneDrive$list_files(NotTopLevelFolderList[j, "name"], full_names=TRUE))
     
     ##Error logic for OneDrive query.##
-    if(class(NextFolderBind)=="try-error"){
+    if("try-error"%in%class(NextFolderBind)){
       error_type <- attr(NextFolderBind,"condition")
       error_message<-error_type$message
       
@@ -164,7 +166,7 @@ FileList<-filter(FileList, size!=0)
 FileList<-filter(FileList, isdir==FALSE)
 
 for(i in 1:nrow(FolderList)){
-  print(i)
+  #print(i)
   if(i<=nrow(TopLevelFolderList)){
     FileListBind<-OneDrive$list_files(substring(FolderList[i, "name"],2), full_names=TRUE)
     FileListBind<-filter(FileListBind, size!=0)
@@ -269,7 +271,7 @@ if(nrow(FoldersToCreate)!=0){
     FolderPath<-as.character(FoldersToCreate[i,"OneDrivePath"])
     FolderCreateTry<-try(OneDrive$create_folder(FolderPath), silent=TRUE)
   
-    if(class(FolderCreateTry)=="try-error"){
+    if("try-error"%in% class(FolderCreateTry)){
       error_type <- attr(FolderCreateTry,"condition")
       error_message<-error_type$message
 
@@ -306,7 +308,7 @@ if(nrow(FoldersToCreate)!=0){
 }else{
   print("No folders needed to be created.")
 }
-
+toc()
 
 
 
@@ -368,8 +370,14 @@ rownames(FilesToUpload)<-NULL
 RemovalList<-sapply(RemovalList,"[[",1)
 FilesToUpload<-FilesToUpload[-RemovalList,]
 FileFails<-0
+
+##New filter additions due to Windows 11 upgrade.##
+FilesToUpload<-FilesToUpload%>%filter(!grepl('.db', Path))
+FilesToUpload<-FilesToUpload%>%filter(!grepl('.ini', Path))
+
 TotalFiles<-as.numeric(nrow(FilesToUpload))
 rownames(FilesToUpload)<-NULL
+tic("File Upload")
 if(TotalFiles!=0){
   for(i in 1:nrow(FilesToUpload)){
     if(grepl("#",as.character(FilesToUpload[i,"Path"]))){
@@ -393,7 +401,7 @@ if(TotalFiles!=0){
   
   FileUploadTry<-try(OneDrive$upload_file(src=as.character(FilesToUpload[i,"Path"]), dest=as.character(FilesToUpload[i,"OneDrivePath"])), silent=TRUE)
     ##Error logic for OneDrive query.##
-    if(class(FileUploadTry)=="try-error"){
+    if("try-error"%in%class(FileUploadTry)){
       error_type <- attr(FileUploadTry,"condition")
       error_message<-error_type$message
         
@@ -440,4 +448,4 @@ if(TotalFiles!=0){
   print("OneDrive is up-to-date with local drive.")
   print(paste0(FileFails, " file(s) failed to upload."))
 }
-
+toc()
